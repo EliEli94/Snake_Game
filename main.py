@@ -6,6 +6,25 @@ import random
 SIZE = 40
 BACKGROUND_COLOR = (324, 235, 195)
 
+class Boundary:
+    def __init__(self, parent_screen):
+        self.boundary_block = pygame.image.load("resources/block.jpg").convert()
+        self.parent_screen = parent_screen
+        self.x1 = 0
+        self.x2 = 960
+        self.y1 = 0
+        self.y2 = 760
+
+    def draw(self):
+        for i in range(0, 1000, 40):
+            self.parent_screen.blit(self.boundary_block, (i,self.y1))
+            self.parent_screen.blit(self.boundary_block, (i,self.y2))
+        for i in range(0, 800, 40):
+            self.parent_screen.blit(self.boundary_block, (self.x1,i))
+            self.parent_screen.blit(self.boundary_block, (self.x2,i))
+        pygame.display.flip()
+
+
 class Apple:
     def __init__(self,parent_screen):
         self.parent_screen = parent_screen
@@ -18,8 +37,8 @@ class Apple:
         pygame.display.flip()
 
     def move(self):
-        self.x = random.randint(0,24)*SIZE
-        self.y = random.randint(0,19)*SIZE
+        self.x = random.randint(0,23)*SIZE
+        self.y = random.randint(0,18)*SIZE
 
 class Snake:
     def __init__(self, parent_screen, length):
@@ -81,10 +100,24 @@ class Game:
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
+        self.boundary = Boundary(self.surface)
+        # self.boundary.draw()
     
     def render_background(self):
         bg = pygame.image.load("resources/background.jpg").convert()
         self.surface.blit(bg, (0,0))
+
+    # def draw_boundaries(self):
+    #     boundary_block = pygame.image.load("resources/block.jpg").convert()
+    #     for i in range(0,1000,40):
+    #         self.surface.blit(boundary_block, (i,0))
+    #         for j in range(0,800,40):
+    #             self.surface.blit(boundary_block, (0,j))
+    #             for k in range(0,1000,40):
+    #                 self.surface.blit(boundary_block, (k,1000))
+    #                 for l in range(0,800,40):
+    #                     self.surface.blit(boundary_block, (800,l))
+
 
     def is_collision(self, x1, y1, x2, y2):
         if x1 >= x2 and x1 < x2 + SIZE:
@@ -103,6 +136,7 @@ class Game:
 
     def play(self):
         self.render_background()
+        self.boundary.draw()
         self.snake.walk()
         self.apple.draw()
         self.display_score()
