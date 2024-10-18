@@ -107,28 +107,20 @@ class Game:
         bg = pygame.image.load("resources/background.jpg").convert()
         self.surface.blit(bg, (0,0))
 
-    # def draw_boundaries(self):
-    #     boundary_block = pygame.image.load("resources/block.jpg").convert()
-    #     for i in range(0,1000,40):
-    #         self.surface.blit(boundary_block, (i,0))
-    #         for j in range(0,800,40):
-    #             self.surface.blit(boundary_block, (0,j))
-    #             for k in range(0,1000,40):
-    #                 self.surface.blit(boundary_block, (k,1000))
-    #                 for l in range(0,800,40):
-    #                     self.surface.blit(boundary_block, (800,l))
-
-
     def is_collision(self, x1, y1, x2, y2):
         if x1 >= x2 and x1 < x2 + SIZE:
             if y1 >= y2 and y1 < y2 + SIZE:
                 return True
+        return False
 
+    def wall_collision(self, x1, x2, y1, y2):
+        if x1< 0 or x1>=x2 or y1 < 0 or y1>=y2:
+            return True
         return False
     
     def play_background_music(self):
         pygame.mixer.music.load("resources/bg_music_1.mp3")
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(-1)
 
     def play_sound(self,sound):
         sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
@@ -153,6 +145,12 @@ class Game:
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 self.play_sound('crash')
                 raise "Game Over"
+
+        #snake colliding will boundary
+        if self.wall_collision(self.snake.x[0],self.boundary.x2,self.snake.y[0],self.boundary.y2):
+            self.play_sound('crash')
+            raise "Game Over"
+            # if self.snake.x[0] < 0 or self.snake.x[0]>=self.boundary.x2 or self.snake.y[0] < 0 or self.snake.y[0]>=self.boundary.y2:
     
     def display_score(self):
         font = pygame.font.SysFont('arial',30)
@@ -186,7 +184,7 @@ class Game:
                         running = False
 
                     if event.key == K_RETURN:
-                        pygame.mixer.music.unpause()
+                        pygame.mixer.music.play(-1)
                         pause = False
 
                     if not pause:   
